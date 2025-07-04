@@ -22,29 +22,35 @@ public class Main {
 		
 		
 		String sceltaGestione = "0";
+		String sceltaAccesso="0";
 		Utente logIn=null;
 		boolean accesso=false;
 		boolean gestione=false;
 		
-		if(gestioneUtente.listaUtente.isEmpty() || !gestioneUtente.listaUtente.get(0).getRuolo().equals("admin")) {
+		if(gestioneUtente.listaUtente.isEmpty() || gestioneUtente.cercaUtentePerRuolo("admin")==null) {
 			bootstrap(gestioneUtente,gestioneRuolo,gestionePermesso,gestioneGruppo);
 			accesso=true;
 		}else {
 			accesso=true;
 		}
 		
+		while(true) {
+			
 		while(accesso) {
+			switch (sceltaAccesso) {
+			case "0":
 			System.out.println("1--- ACCEDI ---");
 			System.out.println("2--- REGISTRATI ---");
 			System.out.print("Scelta: ");
-			String sceltaAccesso=scanner.nextLine();
-			switch (sceltaAccesso) {
+			sceltaAccesso=scanner.nextLine();
+			break;
 			case "1":
 				Utente accedi=accedi(gestioneUtente,scanner);
 				if(accedi!=null) {
 					logIn=accedi;
 					accesso=false;
 					gestione=true;
+					break;
 				}else {
 					System.out.println("DATI ERRATI");
 				}
@@ -57,22 +63,31 @@ public class Main {
 		}
 
 
-
-
 		while (gestione) {
 			String cf=logIn.getCodiceFiscale();
 			switch(sceltaGestione) {            	
 			case "0":
-				System.out.println("SCEGLI GESTIONE");
+				System.out.println("\n--- SCEGLI GESTIONE ---");
 				List<String> menu=gestioneUtente.getMenu(cf, gestioneRuolo, gestioneGruppo, gestioneUtente);//lista gruppi utente
 				int i=1;
 				for(String g:menu) {
 					System.out.println("---"+i+"."+" "+g+" ---");
 					i+=1;
 				}
+				System.out.println("---0. ESCI ---");
 				System.out.print("Scelta: ");
 				int scelta = scanner.nextInt();
-				sceltaGestione = menu.get(scelta-1);
+				if(scelta==0) {
+					accesso=true;
+					gestione=false;
+					logIn=null;
+					sceltaAccesso="0";
+				}else if(scelta>menu.size()) {
+					System.out.println("Scelta non disponibile");
+					break;
+				}else {
+					sceltaGestione = menu.get(scelta-1);
+				}
 			}
 
 			switch(sceltaGestione) {
@@ -92,7 +107,7 @@ public class Main {
 				if(scelta==0) {
 					sceltaAuto="0";
 				}else if(scelta>sottoMenu.size()) {
-					System.out.print("Scelta non disponibile");
+					System.out.println("Scelta non disponibile");
 					break;
 				}else {
 					sceltaAuto=sottoMenu.get(scelta-1);
@@ -169,7 +184,7 @@ public class Main {
 				if(scelta==0) {
 					sceltaUtente="0";
 				}else if(scelta>sottoMenu.size()) {
-					System.out.print("Scelta non disponibile");
+					System.out.println("Scelta non disponibile");
 					break;
 				}else {
 					sceltaUtente=sottoMenu.get(scelta-1);
@@ -224,7 +239,7 @@ public class Main {
 			if(scelta==0) {
 				sceltaRuolo="0";
 			}else if(scelta>sottoMenu.size()) {
-				System.out.print("Scelta non disponibile");
+				System.out.println("Scelta non disponibile");
 				break;
 			}else {
 				sceltaRuolo=sottoMenu.get(scelta-1);
@@ -276,7 +291,7 @@ public class Main {
 			if(scelta==0) {
 				sceltaPermesso="0";
 			}else if(scelta>sottoMenu.size()) {
-				System.out.print("Scelta non disponibile");
+				System.out.println("Scelta non disponibile");
 				break;
 			}else {
 				sceltaPermesso=sottoMenu.get(scelta-1);
@@ -338,7 +353,7 @@ public class Main {
 			if(scelta==0) {
 				sceltaGruppo="0";
 			}else if(scelta>sottoMenu.size()) {
-				System.out.print("Scelta non disponibile");
+				System.out.println("Scelta non disponibile");
 				break;
 			}else {
 				sceltaGruppo=sottoMenu.get(scelta-1);
@@ -372,8 +387,8 @@ public class Main {
 				System.out.println("Errore: " + e.getMessage());
 			}
 			}
-
-		}//FINE WHILE
+		}
+		}
 	}//FINE MAIN
 
 
